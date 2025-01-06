@@ -1,9 +1,12 @@
 [tool.poetry]
-name = "python-project-83"
+name = "hexlet-code"
 version = "0.1.0"
 description = ""
 authors = ["Slavyan <GlockOglock@yandex.ru>"]
 readme = "README.md"
+packages = [
+  { include = "brain_games" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
