@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import validators
-from .db import add_url, get_url, get_name, get_url_by_name
+from .db import add_url, get_url, get_name, get_url_by_name, create_check, read_all_check
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 import os
+import requests
+from requests.exceptions import ConnectionError
 
 
 
@@ -39,13 +41,28 @@ def create_url():
 
 @app.route('/urls/<int:id>')
 def url_id(id):
-    id, name, created_at = get_url(id)
-    return render_template('urls.html', id=id, name=name, created_at=created_at)
+    url_data = get_url(id)
+    if url_data:
+        id, name, created_at = url_data
+        all_check_url = read_all_check(id)
+        return render_template('urls.html', id=id, name=name, created_at=created_at, all_check_url=all_check_url)
+    else:
+        return render_template('404.html'), 404
 
 
 @app.route('/urls')
 def all_url():
     data = get_name()
+
     return render_template('urls_list.html', all_urls=data)
+
+
+@app.route('/urls/<id>/checks', methods=['POST'])
+def add_check(id):
+    status = create_check(url_id=id)
+    if status == 'error':
+        flash('Произошла ошибка при проверке', category='alert-danger')
+    return redirect(url_for('url_id', id=id))
+
 
 
