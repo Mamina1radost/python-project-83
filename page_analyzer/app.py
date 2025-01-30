@@ -76,4 +76,6 @@ def add_check(id):
     status = create_check(url_id=id)
     if status == "error":
         flash("Произошла ошибка при проверке", category="alert-danger")
+    else:
+        flash('Страница успешно проверена', category='alert-success')
     return redirect(url_for("url_id", id=id))
