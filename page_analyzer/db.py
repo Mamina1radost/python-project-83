@@ -9,10 +9,10 @@ from bs4 import BeautifulSoup
 
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
-conn = psycopg2.connect(DATABASE_URL)
 
 
-def add_url(url, conn=conn):
+def add_url(url):
+    conn = psycopg2.connect(DATABASE_URL)
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -25,7 +25,8 @@ def add_url(url, conn=conn):
         return id[0]
 
 
-def get_url(id, conn=conn):
+def get_url(id):
+    conn = psycopg2.connect(DATABASE_URL)
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -36,7 +37,8 @@ def get_url(id, conn=conn):
         return url_data
 
 
-def get_name(conn=conn):
+def get_name():
+    conn = psycopg2.connect(DATABASE_URL)
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -47,7 +49,8 @@ def get_name(conn=conn):
         return data
 
 
-def get_url_by_name(name, conn=conn):
+def get_url_by_name(name):
+    conn = psycopg2.connect(DATABASE_URL)
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -60,7 +63,8 @@ def get_url_by_name(name, conn=conn):
         return url
 
 
-def create_check(url_id, conn=conn):
+def create_check(url_id):
+    conn = psycopg2.connect(DATABASE_URL)
     data = get_url(url_id)
     url = data[1]
     try:
@@ -98,7 +102,8 @@ def create_check(url_id, conn=conn):
         return check_url_id[0]
 
 
-def read_all_check(url_id, conn=conn):
+def read_all_check(url_id):
+    conn = psycopg2.connect(DATABASE_URL)
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -109,7 +114,8 @@ def read_all_check(url_id, conn=conn):
         return all_check_url
 
 
-def get_last_check(url_id, conn=conn):
+def get_last_check(url_id):
+    conn = psycopg2.connect(DATABASE_URL)
     with conn.cursor() as cur:
         cur.execute(
             """
