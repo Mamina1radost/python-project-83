@@ -67,39 +67,40 @@ def create_check(url_id):
     conn = psycopg2.connect(DATABASE_URL)
     data = get_url(url_id)
     url = data[1]
+
     try:
-        code = requests.get(url)
-    except ConnectionError as e:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+    except requests.RequestException:
         return "error"
-    soup = BeautifulSoup(code.text, "html.parser")
+
+    soup = BeautifulSoup(response.text, "html.parser")
     h1 = soup.find("h1")
-    if h1 is None:
-        h1 = ""
-    else:
-        h1 = h1.get_text()
+    h1_text = h1.get_text() if h1 else ""
+
     title = soup.find("title")
-    if title is None:
-        title = ""
-    else:
-        title = title.get_text()
+    title_text = title.get_text() if title else ""
+
     meta_description = soup.find("meta", attrs={"name": "description"})
-    if meta_description and "content" in meta_description.attrs:
-        description = meta_description["content"]
-    else:
-        description = ""
+    description = meta_description["content"] if (meta_description and "content" in meta_description.attrs) else ""
 
     with conn.cursor() as cur:
-        cur.execute(
-            """
-        INSERT INTO 
-        url_checks (url_id, status_code, created_at, description, h1, title) 
-        VALUES (%s, %s, %s, %s, %s, %s) 
-        RETURNING id;""",
-            (url_id, code.status_code, datetime.now().date(), description, h1, title),
-        )
-        check_url_id = cur.fetchone()
+        cur.execute("""
+            INSERT INTO url_checks (url_id, status_code, created_at, description, h1, title)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id;
+        """, (
+            url_id,
+            response.status_code,
+            datetime.now().date(),
+            description,
+            h1_text,
+            title_text
+        ))
+        check_id = cur.fetchone()[0]
         conn.commit()
-        return check_url_id[0]
+
+    return "ok"
 
 
 def read_all_check(url_id):
