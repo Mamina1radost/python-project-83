@@ -44,7 +44,7 @@ def create_url():
             return redirect(url_for("url_id", id=check_url))
     else:
         flash("Некорректный URL", category="alert-danger")
-        return redirect(url_for("index"))
+        return render_template('index.html'), 422
 
 
 @app.route("/urls/<int:id>")
