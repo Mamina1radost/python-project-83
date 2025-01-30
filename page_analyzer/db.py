@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 import requests
-from requests.exceptions import ConnectionError, Timeout, RequestException
 from bs4 import BeautifulSoup
 
 
@@ -82,21 +81,28 @@ def create_check(url_id):
     title_text = title.get_text() if title else ""
 
     meta_description = soup.find("meta", attrs={"name": "description"})
-    description = meta_description["content"] if (meta_description and "content" in meta_description.attrs) else ""
+    description = (
+        meta_description["content"]
+        if (meta_description and "content" in meta_description.attrs)
+        else ""
+    )
 
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO url_checks (url_id, status_code, created_at, description, h1, title)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id;
-        """, (
-            url_id,
-            response.status_code,
-            datetime.now().date(),
-            description,
-            h1_text,
-            title_text
-        ))
+        """,
+            (
+                url_id,
+                response.status_code,
+                datetime.now().date(),
+                description,
+                h1_text,
+                title_text,
+            ),
+        )
         check_id = cur.fetchone()[0]
         conn.commit()
 

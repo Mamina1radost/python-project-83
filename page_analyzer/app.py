@@ -11,8 +11,6 @@ from .db import (
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 import os
-import requests
-from requests.exceptions import ConnectionError
 
 
 load_dotenv()
@@ -44,7 +42,7 @@ def create_url():
             return redirect(url_for("url_id", id=check_url))
     else:
         flash("Некорректный URL", category="alert-danger")
-        return render_template('index.html'), 422
+        return render_template("index.html"), 422
 
 
 @app.route("/urls/<int:id>")
@@ -77,5 +75,5 @@ def add_check(id):
     if status == "error":
         flash("Произошла ошибка при проверке", category="alert-danger")
     else:
-        flash('Страница успешно проверена', category='alert-success')
+        flash("Страница успешно проверена", category="alert-success")
     return redirect(url_for("url_id", id=id))
