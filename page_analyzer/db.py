@@ -41,8 +41,10 @@ def get_name():
     with conn.cursor() as cur:
         cur.execute(
             """
-            SELECT urls.id, urls.name, MAX(url_checks.created_at), MAX(url_checks.status_code) 
-            FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id GROUP BY urls.id ORDER BY urls.created_at DESC;"""
+            SELECT urls.id, urls.name, MAX(url_checks.created_at),
+            MAX(url_checks.status_code)
+            FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id
+            GROUP BY urls.id ORDER BY urls.created_at DESC;"""
         )
         data = cur.fetchall()
         return data
@@ -90,9 +92,9 @@ def create_check(url_id):
     with conn.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO url_checks (url_id, status_code, created_at, description, h1, title)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING id;
+            INSERT INTO url_checks (url_id, status_code,
+            created_at, description, h1, title)
+            VALUES (%s, %s, %s, %s, %s, %s);
         """,
             (
                 url_id,
@@ -103,7 +105,6 @@ def create_check(url_id):
                 title_text,
             ),
         )
-        check_id = cur.fetchone()[0]
         conn.commit()
 
     return "ok"
@@ -114,7 +115,8 @@ def read_all_check(url_id):
     with conn.cursor() as cur:
         cur.execute(
             """
-        SELECT * FROM url_checks WHERE url_id = (%s) ORDER BY created_at DESC;""",
+        SELECT * FROM url_checks WHERE url_id = (%s)
+        ORDER BY created_at DESC;""",
             (url_id,),
         )
         all_check_url = cur.fetchall()
