@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "hexlet-code"
 version = "0.1.0"
-description = ""
+description = "SEO-analyser Flask-powered"
 authors = ["Slavyan <GlockOglock@yandex.ru>"]
 readme = "README.md"
 packages = [

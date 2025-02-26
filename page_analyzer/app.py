@@ -3,7 +3,7 @@ import validators
 from .db import (
     add_url,
     get_url,
-    get_name,
+    get_checks,
     get_url_by_name,
     create_check,
     read_all_check,
@@ -64,7 +64,7 @@ def url_id(id):
 
 @app.route("/urls")
 def all_url():
-    data = get_name()
+    data = get_checks()
 
     return render_template("urls_list.html", all_urls=data)
 

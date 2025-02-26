@@ -36,7 +36,7 @@ def get_url(id):
         return url_data
 
 
-def get_name():
+def get_checks():
     conn = psycopg2.connect(DATABASE_URL)
     with conn.cursor() as cur:
         cur.execute(
